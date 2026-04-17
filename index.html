@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sterkrade 69ers · Leaderboard</title>
+  <meta name="description" content="Live-Leaderboard des Sterkrade 69ers NBA Playoff Tippspiels 2026." />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+
+  <!-- Schriften -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ---------- Design-Tokens ---------- */
+    :root {
+      --navy:        #05274A;
+      --navy-soft:   #0c335f;
+      --navy-ink:    #021a34;
+      --orange:      #E1630C;
+      --orange-hot:  #ff7a1f;
+      --orange-soft: #fff1e3;
+      --cream:       #fdfaf5;
+      --line:        #ecdfcf;
+      --muted:       #6b7a8f;
+      --white:       #ffffff;
+      --shadow:      0 10px 30px rgba(5, 39, 74, 0.08);
+      --shadow-lg:   0 20px 50px rgba(5, 39, 74, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      font-family: 'Manrope', system-ui, sans-serif;
+      font-weight: 400;
+      color: var(--navy);
+      background: var(--cream);
+      background-image:
+        radial-gradient(circle at 12% 8%,  rgba(225, 99, 12, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 92% 92%, rgba(5, 39, 74, 0.06)  0%, transparent 50%);
+      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* ---------- Header ---------- */
+    header.topbar {
+      background: var(--navy);
+      color: var(--white);
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 4px solid var(--orange);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+    }
+    header.topbar .logo {
+      width: 52px; height: 52px;
+      background: var(--white);
+      border-radius: 50%;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    header.topbar .logo img { width: 46px; height: 46px; object-fit: contain; }
+    header.topbar .titles { display: flex; flex-direction: column; line-height: 1.1; }
+    header.topbar .brand {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: clamp(18px, 2.4vw, 22px);
+      letter-spacing: 0.02em;
+    }
+    header.topbar .tagline {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--orange-hot);
+      font-weight: 600;
+      margin-top: 3px;
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      max-width: 980px;
+      margin: 48px auto 28px;
+      padding: 0 24px;
+      text-align: center;
+    }
+    .hero .kicker {
+      display: inline-block;
+      background: var(--navy);
+      color: var(--orange-hot);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 7px 16px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: clamp(42px, 7vw, 78px);
+      letter-spacing: 0.01em;
+      line-height: 0.95;
+      color: var(--navy);
+      text-transform: uppercase;
+    }
+    .hero h1 .accent {
+      color: var(--orange);
+      display: inline-block;
+      transform: skewX(-6deg);
+    }
+    .hero p.sub {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    /* ---------- Leaderboard-Container ---------- */
+    main {
+      max-width: 980px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding: 14px 20px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .status-bar .live {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .status-bar .live::before {
+      content: '';
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #2bb673;
+      box-shadow: 0 0 0 0 rgba(43, 182, 115, 0.6);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0   rgba(43, 182, 115, 0.5); }
+      70%  { box-shadow: 0 0 0 10px rgba(43, 182, 115, 0);    }
+      100% { box-shadow: 0 0 0 0   rgba(43, 182, 115, 0);    }
+    }
+    .status-bar button {
+      background: var(--navy);
+      color: var(--white);
+      border: 0;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .status-bar button:hover { background: var(--orange); }
+
+    /* ---------- Ranking-Liste ---------- */
+    .leaderboard {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      align-items: center;
+      gap: 16px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 22px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      box-shadow: var(--shadow);
+      animation: slideIn 0.5s ease both;
+    }
+    .row:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--orange);
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .row .pos {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 46px;
+      line-height: 1;
+      color: var(--muted);
+      text-align: center;
+      letter-spacing: 0.02em;
+    }
+
+    .row .info { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .row .name-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+    .row .name {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 600;
+      font-size: clamp(18px, 2.2vw, 22px);
+      color: var(--navy);
+      line-height: 1.15;
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+    .crown {
+      color: var(--orange);
+      font-size: 18px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .row .team-badge {
+      display: inline-block;
+      font-family: 'Oswald', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--orange);
+      background: var(--navy);
+      padding: 4px 10px;
+      border-radius: 6px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .row.top1 .team-badge {
+      background: var(--orange);
+      color: var(--white);
+    }
+    .row .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .row .stat {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      background: var(--cream);
+      border: 1px solid var(--line);
+      padding: 3px 9px;
+      border-radius: 6px;
+      letter-spacing: 0.02em;
+    }
+    .row .stat strong {
+      color: var(--navy);
+      font-weight: 700;
+      margin-left: 4px;
+    }
+
+    .row .score {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      line-height: 1;
+    }
+    .row .score .num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 44px;
+      color: var(--orange);
+      letter-spacing: 0.02em;
+    }
+    .row .score .lbl {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* Top-3 Hervorhebung */
+    .row.top1,
+    .row.top2,
+    .row.top3 {
+      border-left: 6px solid var(--orange);
+      padding-left: 18px;
+    }
+    .row.top1 {
+      background: linear-gradient(135deg, #fff 0%, var(--orange-soft) 100%);
+      border-color: var(--orange);
+      box-shadow: 0 15px 40px rgba(225, 99, 12, 0.18);
+    }
+    .row.top1 .pos {
+      color: var(--orange);
+      font-size: 58px;
+    }
+    .row.top2 .pos { color: var(--navy); }
+    .row.top3 .pos { color: var(--navy-soft); }
+    .row.top1 .name { font-size: clamp(20px, 2.6vw, 26px); }
+
+    /* ---------- Leer-/Lade-/Fehlerzustände ---------- */
+    .state {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 60px 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .state h3 {
+      font-family: 'Oswald', sans-serif;
+      color: var(--navy);
+      margin-bottom: 8px;
+      font-size: 22px;
+    }
+    .spinner {
+      width: 42px; height: 42px;
+      border: 4px solid var(--line);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      margin: 0 auto 18px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---------- Footer ---------- */
+    footer {
+      text-align: center;
+      padding: 40px 24px 60px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+    footer a { color: var(--navy); text-decoration: none; border-bottom: 1px solid var(--orange); padding-bottom: 1px; }
+    footer a:hover { color: var(--orange); }
+
+    /* ---------- Mobile ---------- */
+    @media (max-width: 620px) {
+      header.topbar { padding: 14px 18px; }
+      header.topbar .logo { width: 44px; height: 44px; }
+      header.topbar .logo img { width: 38px; height: 38px; }
+      .row { grid-template-columns: 54px 1fr auto; gap: 12px; padding: 14px 16px; }
+      .row .pos { font-size: 36px; }
+      .row.top1 .pos { font-size: 44px; }
+      .row .score .num { font-size: 34px; }
+      .row .name {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+      }
+      .hero { margin: 32px auto 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="logo"><img src="assets/logo.png" alt="Sterkrade 69ers Logo" /></div>
+    <div class="titles">
+      <span class="brand">Sterkrade 69ers</span>
+      <span class="tagline">NBA Playoff Tippspiel 2026</span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="kicker">Live-Stand</span>
+    <h1>Lead<span class="accent">er</span>board</h1>
+    <p class="sub">Der aktuelle Stand im Tippspiel — direkt aus dem Spreadsheet.</p>
+  </section>
+
+  <main>
+    <div class="status-bar">
+      <span class="live">Live · automatische Aktualisierung</span>
+      <span id="updated">Lade Daten…</span>
+      <button id="refresh" type="button">Aktualisieren</button>
+    </div>
+
+    <div id="board" class="leaderboard">
+      <div class="state">
+        <div class="spinner"></div>
+        <h3>Daten werden geladen…</h3>
+        <p>Ziehe den aktuellen Stand aus dem Google Sheet.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © Sterkrade 69ers · Daten aus
+    <a href="https://docs.google.com/spreadsheets/d/1Reqkz1tkFevziPjEhTcE5SrwWHaCLz0oeAXdjHUrYHQ/edit" target="_blank" rel="noopener">Google Sheet</a>
+  </footer>
+
+  <script>
+    // ========== KONFIGURATION ==========
+    const SHEET_ID   = '1Reqkz1tkFevziPjEhTcE5SrwWHaCLz0oeAXdjHUrYHQ';
+    const SHEET_NAME = 'Leaderboard';
+    const REFRESH_MS = 5 * 60 * 1000;   // alle 5 Minuten neu laden
+
+    // ========== CSV-PARSER (quote-aware) ==========
+    function parseCSV(text) {
+      const rows = [];
+      let row = [], field = '', inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQuotes) {
+          if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+          else if (c === '"') { inQuotes = false; }
+          else { field += c; }
+        } else {
+          if (c === '"') { inQuotes = true; }
+          else if (c === ',') { row.push(field); field = ''; }
+          else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+          else if (c === '\r') { /* ignore */ }
+          else { field += c; }
+        }
+      }
+      if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
+      // Leere Zeilen filtern
+      return rows.filter(r => r.some(cell => (cell || '').trim() !== ''));
+    }
+
+    // ========== SPALTEN-HEURISTIK ==========
+    // erkennt welche Spalten Position / Name / Hauptpunkte sind
+    function classifyColumns(headers, rows) {
+      const lower = headers.map(h => (h || '').toLowerCase().trim());
+      const find = (...keys) => lower.findIndex(h => keys.some(k => h.includes(k)));
+
+      let posIdx   = find('platzierung', 'position', 'rang', 'platz', 'rank', '#');
+      let nameIdx  = find('name', 'spieler', 'tipper', 'teilnehmer', 'user', 'player');
+      let teamIdx  = find('team', 'mannschaft');
+      let scoreIdx = find('punkte', 'gesamt', 'total', 'score', 'summe');
+
+      // Fallbacks: 1. Spalte = Position, 2. Spalte = Name, letzte numerische Spalte = Score
+      if (posIdx   < 0) posIdx = 0;
+      if (nameIdx  < 0) nameIdx = posIdx + 1 < headers.length ? posIdx + 1 : 1;
+      if (scoreIdx < 0) {
+        for (let i = headers.length - 1; i >= 0; i--) {
+          if (i === posIdx || i === nameIdx || i === teamIdx) continue;
+          const sample = rows[0] ? rows[0][i] : '';
+          if (sample && !isNaN(parseFloat(String(sample).replace(',', '.')))) { scoreIdx = i; break; }
+        }
+      }
+      if (scoreIdx < 0) scoreIdx = headers.length - 1;
+      return { posIdx, nameIdx, teamIdx, scoreIdx };
+    }
+
+    // ========== RENDERING ==========
+    function render(rows) {
+      const board = document.getElementById('board');
+      if (!rows || rows.length < 2) {
+        board.innerHTML = `<div class="state"><h3>Noch keine Daten</h3><p>Das Leaderboard ist aktuell leer.</p></div>`;
+        return;
+      }
+
+      const headers = rows[0].map(h => (h || '').trim());
+      const data = rows.slice(1);
+      const { posIdx, nameIdx, teamIdx, scoreIdx } = classifyColumns(headers, data);
+
+      // Sortierung: nach Position (falls numerisch) aufsteigend, sonst nach Score absteigend
+      data.sort((a, b) => {
+        const pa = parseFloat(String(a[posIdx]).replace(',', '.'));
+        const pb = parseFloat(String(b[posIdx]).replace(',', '.'));
+        if (!isNaN(pa) && !isNaN(pb)) return pa - pb;
+        const sa = parseFloat(String(a[scoreIdx]).replace(',', '.'));
+        const sb = parseFloat(String(b[scoreIdx]).replace(',', '.'));
+        return (sb || 0) - (sa || 0);
+      });
+
+      const html = data.map((r, i) => {
+        const rankRaw = r[posIdx];
+        const rankNum = parseFloat(String(rankRaw).replace(',', '.'));
+        const rank    = (rankRaw && String(rankRaw).trim()) || (i + 1);
+        const name    = (r[nameIdx]  || '—').trim();
+        const team    = teamIdx >= 0 ? (r[teamIdx] || '').trim() : '';
+        const score   = (r[scoreIdx] || '').toString().trim();
+
+        // weitere Stats (alle Spalten außer pos/name/team/score)
+        const extras = headers
+          .map((h, idx) => ({ label: h, value: (r[idx] || '').toString().trim(), idx }))
+          .filter(x => x.idx !== posIdx && x.idx !== nameIdx && x.idx !== teamIdx && x.idx !== scoreIdx && x.value !== '' && x.label !== '');
+
+        // Top-Klasse nach ECHTER Platzierung (nicht Zeilenindex) – so bekommen geteilte Plätze gleiche Hervorhebung
+        const rankForClass = !isNaN(rankNum) ? rankNum : (i + 1);
+        const topClass = rankForClass === 1 ? 'top1' : rankForClass === 2 ? 'top2' : rankForClass === 3 ? 'top3' : '';
+        const crown    = rankForClass === 1 ? '<span class="crown">★</span>' : '';
+
+        const teamBadge = team ? `<span class="team-badge">${escapeHtml(team)}</span>` : '';
+        const statsHtml = extras.map(e =>
+          `<span class="stat">${escapeHtml(e.label)}<strong>${escapeHtml(e.value)}</strong></span>`
+        ).join('');
+
+        return `
+          <div class="row ${topClass}" style="animation-delay:${i * 50}ms">
+            <div class="pos">${escapeHtml(String(rank))}</div>
+            <div class="info">
+              <div class="name-row">
+                <span class="name">${escapeHtml(name)}</span>
+                ${crown}
+                ${teamBadge}
+              </div>
+              ${statsHtml ? `<div class="stats">${statsHtml}</div>` : ''}
+            </div>
+            <div class="score">
+              <span class="num">${escapeHtml(score)}</span>
+              <span class="lbl">Punkte</span>
+            </div>
+          </div>`;
+      }).join('');
+
+      board.innerHTML = html;
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    // ========== DATEN-LOAD ==========
+    async function load() {
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}&_t=${Date.now()}`;
+      const upd = document.getElementById('updated');
+      upd.textContent = 'Aktualisiere…';
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        const rows = parseCSV(text);
+        render(rows);
+        const now = new Date();
+        const time = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+        const date = now.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        upd.textContent = `Zuletzt aktualisiert: ${date}, ${time} Uhr`;
+      } catch (err) {
+        console.error(err);
+        document.getElementById('board').innerHTML = `
+          <div class="state">
+            <h3>Daten konnten nicht geladen werden</h3>
+            <p>Bitte prüfe, ob das Google Sheet öffentlich freigegeben ist<br>(„Jeder mit dem Link → Betrachter").</p>
+          </div>`;
+        upd.textContent = 'Fehler beim Laden';
+      }
+    }
+
+    document.getElementById('refresh').addEventListener('click', load);
+    load();
+    setInterval(load, REFRESH_MS);
+  </script>
+</body>
+</html>
